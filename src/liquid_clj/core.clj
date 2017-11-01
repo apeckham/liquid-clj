@@ -1,18 +1,23 @@
 (ns liquid-clj.core
   (:gen-class)
-  (:require [zweikopf.core :as z]))
+  (:require [zweikopf.core :as z]
+            [hiccup.core :refer [html]]))
+
+(defn liquid-var [v]
+  (str "{{ " (name v) " }}"))
 
 (defn -main
   [& args]
   (z/init-ruby-context)
-  (z/require "liquid")
+  (z/ruby-require "liquid")
 
   #_(-> "Liquid::Template.parse(\"hi {{name}}\").render('name' => 'world')"
       z/ruby-eval
       prn)
 
-  (-> "Liquid::Template"
-      z/ruby-eval
-      (z/call-ruby :parse "hi {{name}}")
-      (z/call-ruby :render (z/rubyize {"name" "b"}))
-      prn))
+  (let [template (html [:span {:class "foo"} "Hello " (liquid-var :name)])]
+    (-> "Liquid::Template"
+        z/ruby-eval
+        (z/call-ruby :parse template)
+        (z/call-ruby :render (z/rubyize {"name" "world!"}))
+        prn)))
