@@ -1,9 +1,8 @@
 (ns liquid-clj.core
   (:gen-class)
-  (:require [zweikopf.core :refer [init-ruby-context]]))
+  (:require [zweikopf.core :as z]))
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
   (z/init-ruby-context)
   (z/require "liquid")
