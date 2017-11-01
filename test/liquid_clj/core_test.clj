@@ -10,11 +10,15 @@
 (defn liq-var [v]
   (str "{{ " (name v) " }}"))
 
+(defn liq-for [v coll children]
+  (list (format "{%% for %s in %s %%}" (name v) (name coll))
+        children
+        "{% endfor %}"))
+
 (defn render [template data]
   (-> (z/ruby-eval "Liquid::Template")
       (z/call-ruby :parse template)
-      (z/call-ruby :render (z/rubyize data))))
-
+      (z/call-ruby :render (z/rubyize data)))) 
 (deftest html-test
   (is (= "<span class=\"foo\">Hello {{ name }}</span>"
          (html [:span {:class "foo"} "Hello " (liq-var :name)]))))
@@ -30,3 +34,12 @@
   (let [template [:span "hello " (liq-var :name) "!"]]
     (is (= "<span>hello world!</span>"
            (render (html template) {"name" "world"})))))
+
+(deftest for-test
+  (let [template [:ul (liq-for :product :products
+                               [:li (liq-var :product.name)])]]
+    (is (= "<ul>{% for product in products %}<li>{{ product.name }}</li>{% endfor %}</ul>"
+           (html template)))
+    (is (= "<ul><li>one</li><li>two</li></ul>"
+           (render (html template) {"products" [{"name" "one"}
+                                                {"name" "two"}]})))))
