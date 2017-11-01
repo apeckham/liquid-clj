@@ -8,4 +8,5 @@
                  [hiccup "1.0.5"]]
   :main ^:skip-aot liquid-clj.core
   :target-path "target/%s"
+  :plugins [[com.jakemccrary/lein-test-refresh "0.21.1"]]
   :profiles {:uberjar {:aot :all}})
