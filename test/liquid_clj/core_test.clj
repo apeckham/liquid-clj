@@ -25,3 +25,8 @@
 
 (deftest render-test
   (is (= "hello world!" (render "hello {{name}}!" {"name" "world"}))))
+
+(deftest together-test
+  (let [template [:span "hello " (liq-var :name) "!"]]
+    (is (= "<span>hello world!</span>"
+           (render (html template) {"name" "world"})))))
