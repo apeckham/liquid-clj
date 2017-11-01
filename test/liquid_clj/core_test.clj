@@ -7,15 +7,12 @@
 (z/init-ruby-context)
 (z/ruby-require "liquid")
 
-#_(defn -main
-  [& args]
+(defn liq-var [v]
+  (str "{{ " (name v) " }}"))
 
-  (let [template (html [:span {:class "foo"} "Hello " (liquid-var :name)])]
-    (-> "Liquid::Template"
-        z/ruby-eval
-        (z/call-ruby :parse template)
-        (z/call-ruby :render (z/rubyize {"name" "world!"}))
-        prn)))
+(deftest html-test
+  (is (= "<span class=\"foo\">Hello {{ name }}</span>"
+         (html [:span {:class "foo"} "Hello " (liq-var :name)]))))
 
 (deftest eval-test
   (is (= "hi world"
