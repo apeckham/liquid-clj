@@ -7,5 +7,12 @@
   [& args]
   (z/init-ruby-context)
   (z/require "liquid")
-  (prn (z/ruby-eval "Liquid::Template.parse(\"hi {{name}}\").render('name' => 'world')"))
+
+  #_(prn (z/ruby-eval "Liquid::Template.parse(\"hi {{name}}\").render('name' => 'world')"))
+  (-> "Liquid::Template"
+      z/ruby-eval
+      (z/call-ruby :parse "hi {{name}}")
+      (z/call-ruby :render (z/rubyize {"name" "b"}))
+      prn)
+
   (println "Hello, World!"))
