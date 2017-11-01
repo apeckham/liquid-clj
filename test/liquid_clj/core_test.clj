@@ -15,6 +15,11 @@
         children
         "{% endfor %}"))
 
+(defn liq-if [condition children]
+  (list (format "{%% if %s %%}" condition)
+        children
+        "{% endif %}"))
+
 (defn render [template data]
   (-> (z/ruby-eval "Liquid::Template")
       (z/call-ruby :parse template)
@@ -43,3 +48,8 @@
     (is (= "<ul><li>one</li><li>two</li></ul>"
            (render (html template) {"products" [{"name" "one"}
                                                 {"name" "two"}]})))))
+
+(deftest if-test
+  (let [template (html (liq-if "number == 1" [:b "cool"]))]
+    (is (= "{% if number == 1 %}<b>cool</b>{% endif %}" template))
+    (is (= "<b>cool</b>" (render template {"number" 1})))))
