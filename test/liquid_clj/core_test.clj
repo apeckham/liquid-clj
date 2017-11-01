@@ -24,8 +24,7 @@
         prn)))
 
 (defn render [template data]
-  (-> "Liquid::Template"
-      z/ruby-eval
+  (-> (z/ruby-eval "Liquid::Template")
       (z/call-ruby :parse template)
       (z/call-ruby :render (z/rubyize data))))
 
