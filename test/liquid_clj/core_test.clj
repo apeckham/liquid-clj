@@ -9,12 +9,6 @@
 
 #_(defn -main
   [& args]
-  (z/init-ruby-context)
-  (z/ruby-require "liquid")
-
-  #_(-> "Liquid::Template.parse(\"hi {{name}}\").render('name' => 'world')"
-        z/ruby-eval
-        prn)
 
   (let [template (html [:span {:class "foo"} "Hello " (liquid-var :name)])]
     (-> "Liquid::Template"
@@ -22,6 +16,10 @@
         (z/call-ruby :parse template)
         (z/call-ruby :render (z/rubyize {"name" "world!"}))
         prn)))
+
+(deftest eval-test
+  (is (= "hi world"
+         (z/ruby-eval "Liquid::Template.parse(\"hi {{name}}\").render('name' => 'world')"))))
 
 (defn render [template data]
   (-> (z/ruby-eval "Liquid::Template")
