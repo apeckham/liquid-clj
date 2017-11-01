@@ -20,6 +20,9 @@
         children
         "{% endif %}"))
 
+(defn liq-raw [children]
+  (list "{% raw %}" children "{% endraw %}"))
+
 (defn render [template data]
   (-> (z/ruby-eval "Liquid::Template")
       (z/call-ruby :parse template)
@@ -50,6 +53,11 @@
                                                 {"name" "two"}]})))))
 
 (deftest if-test
-  (let [template (html (liq-if "number == 1" [:b "cool"]))]
+  (let [template (html (liq-if "number == 1"
+                               [:b "cool"]))]
     (is (= "{% if number == 1 %}<b>cool</b>{% endif %}" template))
     (is (= "<b>cool</b>" (render template {"number" 1})))))
+
+(deftest raw-test
+  (let [template (html (liq-raw "{{curlies}}"))]
+    (is (= "{{curlies}}" (render template {})))))
